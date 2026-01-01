@@ -10,8 +10,8 @@ from app.routes.site import router as site_router
 app = FastAPI()
 
 
-@app.get("/")
-def root():
+@app.get("/health")
+def health():
     return {"status": "ok"}
 
 
@@ -19,8 +19,8 @@ def root():
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
-@app.head("/")
-async def root_head():
+@app.head("/health")
+async def health_head():
     return Response(status_code=200)
 
 
@@ -31,5 +31,4 @@ async def favicon():
 
 # Подключаем маршруты
 app.include_router(site_router)
-
 
