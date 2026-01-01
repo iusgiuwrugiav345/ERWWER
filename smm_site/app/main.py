@@ -2,6 +2,9 @@
 from fastapi import FastAPI, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from app import site
+
+app.include_router(site.router)
 
 # ...existing code...
 app = FastAPI()
@@ -25,3 +28,4 @@ async def favicon():
 # ...existing code...
 app.include_router(site.router)
 # ...existing code...
+
