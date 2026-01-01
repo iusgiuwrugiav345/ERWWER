@@ -7,8 +7,9 @@ from app.services.cryptobot import create_invoice as cryptobot_create_invoice
 from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import RedirectResponse, HTMLResponse
+from app import site
 
-
+app.include_router(site.router)
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
@@ -132,5 +133,6 @@ async def create_invoice_route(
 
     if not pay_url:
         raise HTTPException(status_code=502, detail={"message": "Payment URL not found in invoice response", "response": invoice})
+
 
     return RedirectResponse(pay_url, status_code=302)
