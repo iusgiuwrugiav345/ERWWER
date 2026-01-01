@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Boostix</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* Модальное окно */
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.6); }
+.modal-content { background:#fff; margin:10% auto; padding:20px; border-radius:10px; max-width:400px; position:relative; }
+.modal-content.dark-theme { background:#2c2c3c; color:#fff; }
+.close { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
+.modal input { width:100%; margin:5px 0; padding:5px; border-radius:5px; border:1px solid #ccc; }
+.modal button { margin-top:10px; padding:8px 12px; border:none; border-radius:5px; background:#f05133; color:#fff; cursor:pointer; }
+.modal button:hover { background:#d03c1f; }
+</style>
+</head>
+<body>
+
+<div id="snow-container"></div>
+<script src="/static/main.js"></script>
+
+<div class="theme-toggle">
+    <button id="toggleTheme"><i class="fas fa-adjust"></i> Тема</button>
+</div>
+
+<div class="container">
+    <aside class="sidebar">
+        <h2>Boostix</h2>
+        <p>Баланс: <strong>{{ balance.balance }} {{ balance.currency }}</strong></p>
+        <form id="quickTopupForm" style="margin-bottom:12px">
+            <input type="number" name="amount" placeholder="Пополнить (demo)" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff" />
+        </form>
+        <ul>
+            <li><a class="big-btn" href="/">Главная</a></li>
+            <li><a class="big-btn" href="/orders">Заказы</a></li>
+            <li><a class="big-btn" href="/statistics">Статистика</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <h1>Список услуг</h1>
+
+        <div class="search-bar">
+            <input id="serviceSearch" type="text" placeholder="Поиск сервиса или заказа">
+        </div>
+
+        <div class="socials-tabs">
+            <button class="social-tab" data-social="all">Все</button>
+            <button class="social-tab" data-social="instagram">Instagram</button>
+            <button class="social-tab" data-social="telegram">Telegram</button>
+            <button class="social-tab" data-social="twitter">Twitter</button>
+            <button class="social-tab" data-social="facebook">Facebook</button>
+            <button class="social-tab" data-social="youtube">YouTube</button>
+            <button class="social-tab" data-social="tiktok">TikTok</button>
+        </div>
+
+        <div class="category-tabs" style="margin-top:12px;">
+            <button class="category-tab" data-cat="all">Все</button>
+            <button class="category-tab" data-cat="followers">Подписчики</button>
+            <button class="category-tab" data-cat="views">Просмотры</button>
+            <button class="category-tab" data-cat="likes">Лайки</button>
+            <button class="category-tab" data-cat="reposts">Репосты</button>
+            <button class="category-tab" data-cat="other">Другое</button>
+        </div>
+
+        <div class="services-grid">
+            {% for service in services %}
+            <div class="service-card" data-social="{{ service.social }}" data-category="{{ service.category }}" data-service-id="{{ service.service }}" data-min="{{ service.min }}" data-max="{{ service.max }}" data-rate="{{ service.rate }}">
+                <div class="service-icon">
+                    {% if service.social == "instagram" %}<i class="fab fa-instagram fa-2x" style="color:#E1306C;"></i>
+                    {% elif service.social == "telegram" %}<i class="fab fa-telegram fa-2x" style="color:#0088cc;"></i>
+                    {% elif service.social == "twitter" %}<i class="fab fa-twitter fa-2x" style="color:#1DA1F2;"></i>
+                    {% elif service.social == "facebook" %}<i class="fab fa-facebook fa-2x" style="color:#1877F2;"></i>
+                    {% elif service.social == "youtube" %}<i class="fab fa-youtube fa-2x" style="color:#FF0000;"></i>
+                    {% elif service.social == "tiktok" %}<i class="fab fa-tiktok fa-2x" style="color:#010101;"></i>
+                    {% else %}<i class="fas fa-star fa-2x"></i>{% endif %}
+                </div>
+
+                <h3>{{ service.name }}</h3>
+                <p>Мин.: {{ service.min }} | Макс.: {{ service.max }}</p>
+                <p>Цена за 1000: {{ service.rate }} {{ balance.currency }}</p>
+
+                <!-- service type buttons (optional) -->
+                <div class="service-types" style="display:none">
+                    <button class="type-btn" data-type="views">Просмотры</button>
+                    <button class="type-btn" data-type="followers">Подписчики</button>
+                    <button class="type-btn" data-type="reposts">Репосты</button>
+                </div>
+
+                <button class="select-btn">Выбрать</button>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+<!-- Модальное окно -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalServiceName"></h2>
+        <p>Соц сеть: <span id="modalSocial"></span></p>
+        <p>Мин.: <span id="modalMin"></span> | Макс.: <span id="modalMax"></span></p>
+        <p>Цена за 1000: <span id="modalRate"></span> {{ balance.currency }}</p>
+        <form id="modalOrderForm" method="post" action="/create_invoice">
+            <input type="hidden" name="service_id" id="modalServiceId">
+            <label>Ссылка:</label>
+            <input type="text" name="link" required>
+            <label>Количество:</label>
+            <input type="number" name="quantity" min="1" required>
+            <button type="submit">Подтвердить</button>
+        </form>
+    </div>
+</div>
+
+<script>/* main.js handles theme, filtering and modal */</script>
+
+</body>
+</html>

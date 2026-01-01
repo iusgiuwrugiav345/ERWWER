@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: smm-site
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # Optional: specify a python version if needed
+    # envVars:
+    #  - key: PYTHON_VERSION
+    #    value: "3.11"
