@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boostix - Статистика</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div id="snow-container"></div>
+
+<div class="mobile-header">
+    <button class="menu-toggle" id="openMenu"><i class="fas fa-bars"></i></button>
+    <h2>Boostix</h2>
+    <div class="balance"><strong>{{ balance.balance }} {{ balance.currency }}</strong></div>
+</div>
+
+<div class="theme-toggle">
+    <button id="toggleTheme"><i class="fas fa-adjust"></i> Тема</button>
+</div>
+
+<div class="container">
+<aside class="sidebar">
+    <h2>Boostix</h2>
+    <p>Баланс: <strong>{{ balance.balance }} {{ balance.currency }}</strong></p>
+    <form id="quickTopupForm" style="margin-bottom:12px">
+        <input type="number" name="amount" placeholder="Пополнить (demo)" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff" />
+    </form>
+    <ul>
+        <li><a class="big-btn" href="/">Главная</a></li>
+        <li><a class="big-btn" href="/orders">Заказы</a></li>
+        <li><a class="big-btn" href="/statistics">Статистика</a></li>
+    </ul>
+</aside>
+
+<main class="main-content">
+    <h1>Статистика</h1>
+    <p>Здесь будет статистика пользователя (подключение API возможно позже).</p>
+</main>
+</div>
+
+<script src="/static/main.js"></script>
+</body>
+</html>
