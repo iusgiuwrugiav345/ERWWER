@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boostix</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-theme">
+
+<div id="snow-container"></div>
+
+<div class="mobile-header">
+    <button class="menu-toggle" id="openMenu"><i class="fas fa-bars"></i></button>
+    <a href="/" class="brand-link">
+        <h2>Boostix</h2>
+        <img src="/static/images/logo.png" alt="Logo" class="site-logo">
+    </a>
+    <div class="balance"><strong>{{ balance.balance }} {{ balance.currency }}</strong></div>
+</div>
+
+<div class="container">
+    <aside class="sidebar" style="display: flex; flex-direction: column;">
+        <a href="/" class="brand-link" style="margin-bottom: 32px;">
+            <h2>Boostix</h2>
+            <img src="/static/images/logo.png" alt="Logo" class="site-logo">
+        </a>
+        
+        <div class="balance-container" style="margin-bottom: 30px;">
+            <div class="balance">
+                <i class="fas fa-wallet"></i>
+                <strong>{{ balance.balance }} {{ balance.currency }}</strong>
+            </div>
+        </div>
+
+        <nav class="nav-list">
+            <a href="/" class="nav-item active"><i class="fas fa-home"></i> Главная</a>
+            <a href="/orders" class="nav-item"><i class="fas fa-shopping-bag"></i> Заказы</a>
+            <a href="/statistics" class="nav-item"><i class="fas fa-chart-line"></i> Статистика</a>
+            <a href="/support" class="nav-item"><i class="fas fa-headset"></i> Поддержка</a>
+            <a href="/privacy" class="nav-item"><i class="fas fa-shield-alt"></i> Политика конфиденциальности</a>
+            <a href="/terms" class="nav-item"><i class="fas fa-file-alt"></i> Условия пользования</a>
+        </nav>
+
+        <div class="theme-toggle">
+            <button id="toggleTheme" style="margin-bottom: 20px;"><i class="fas fa-moon"></i> Сменить тему</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+<script src="/static/main.js"></script>
+</body>
+</html>

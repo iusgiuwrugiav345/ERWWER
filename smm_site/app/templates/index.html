@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boostix</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* Модальное окно */
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.6); }
+.modal-content { background:#fff; margin:10% auto; padding:20px; border-radius:10px; max-width:400px; position:relative; }
+.modal-content.dark-theme { background:#2c2c3c; color:#fff; }
+.close { position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; }
+.modal input { width:100%; margin:5px 0; padding:10px; border-radius:5px; border:1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: inherit; }
+.modal button { margin-top:10px; padding:12px 12px; border:none; border-radius:5px; background:#f05133; color:#fff; cursor:pointer; width: 100%; font-weight: bold; }
+.modal button:hover { background:#d03c1f; }
+.calc-box { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.05); }
+.calc-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+.calc-row:last-child { margin-bottom: 0; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); font-weight: bold; font-size: 16px; color: var(--accent); }
+.dark-theme .calc-box { background: rgba(255,255,255,0.02); }
+</style>
+</head>
+<body>
+
+<div id="snow-container"></div>
+
+<div class="mobile-header">
+    <button class="menu-toggle" id="openMenu"><i class="fas fa-bars"></i></button>
+    <a href="/" class="brand-link">
+        <h2>Boostix</h2>
+        <img src="/static/images/logo.png" alt="Logo" class="site-logo">
+    </a>
+    <div class="balance"><strong>{{ balance.balance }} {{ balance.currency }}</strong></div>
+</div>
+
+<div class="container">
+    <aside class="sidebar" style="display: flex; flex-direction: column;">
+        <a href="/" class="brand-link" style="margin-bottom: 32px;">
+            <h2>Boostix</h2>
+            <img src="/static/images/logo.png" alt="Logo" class="site-logo">
+        </a>
+        
+        <div class="balance-container" style="margin-bottom: 30px;">
+            <div class="balance">
+                <i class="fas fa-wallet"></i>
+                <strong>{{ balance.balance }} {{ balance.currency }}</strong>
+            </div>
+        </div>
+
+        <form id="quickTopupForm" style="margin-bottom:12px">
+            <input type="number" name="amount" placeholder="Пополнить (demo)" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff" />
+        </form>
+        
+        <nav class="nav-list">
+            <a href="/" class="nav-item active"><i class="fas fa-home"></i> Главная</a>
+            <a href="/orders" class="nav-item"><i class="fas fa-shopping-bag"></i> Заказы</a>
+            <a href="/statistics" class="nav-item"><i class="fas fa-chart-line"></i> Статистика</a>
+            <a href="/support" class="nav-item"><i class="fas fa-headset"></i> Поддержка</a>
+            <a href="/privacy" class="nav-item"><i class="fas fa-shield-alt"></i> Политика конфиденц..</a>
+            <a href="/terms" class="nav-item"><i class="fas fa-file-alt"></i> Условия пользования</a>
+        </nav>
+
+        <div class="theme-toggle">
+            <button id="toggleTheme" style="margin-bottom: 20px;"><i class="fas fa-moon"></i> Сменить тему</button>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/privacy" class="legal-link">Политика конфиденц..</a>
+            <a href="/terms" class="legal-link">Пользовательское соглашение</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <h1>Список услуг</h1>
+
+        <div class="search-bar">
+            <input id="serviceSearch" type="text" placeholder="Поиск сервиса или заказа">
+        </div>
+
+        <div class="socials-tabs">
+            <button class="social-tab" data-social="all">Все</button>
+            <button class="social-tab" data-social="instagram">Instagram</button>
+            <button class="social-tab" data-social="telegram">Telegram</button>
+            <button class="social-tab" data-social="twitter">Twitter</button>
+            <button class="social-tab" data-social="facebook">Facebook</button>
+            <button class="social-tab" data-social="youtube">YouTube</button>
+            <button class="social-tab" data-social="tiktok">TikTok</button>
+        </div>
+
+        <div class="category-tabs" style="margin-top:12px;">
+            <button class="category-tab" data-cat="all">Все</button>
+            <button class="category-tab" data-cat="followers">Подписчики</button>
+            <button class="category-tab" data-cat="views">Просмотры</button>
+            <button class="category-tab" data-cat="likes">Лайки</button>
+            <button class="category-tab" data-cat="reposts">Репосты</button>
+            <button class="category-tab" data-cat="other">Другое</button>
+        </div>
+
+        <div class="services-grid">
+            {% for service in services %}
+            <div class="service-card" data-social="{{ service.social }}" data-category="{{ service.category }}" data-service-id="{{ service.service }}" data-min="{{ service.min }}" data-max="{{ service.max }}" data-rate="{{ service.rate }}">
+                <div class="service-icon">
+                    {% if service.social == "instagram" %}<i class="fab fa-instagram fa-2x" style="color:#E1306C;"></i>
+                    {% elif service.social == "telegram" %}<i class="fab fa-telegram fa-2x" style="color:#0088cc;"></i>
+                    {% elif service.social == "twitter" %}<i class="fab fa-twitter fa-2x" style="color:#1DA1F2;"></i>
+                    {% elif service.social == "facebook" %}<i class="fab fa-facebook fa-2x" style="color:#1877F2;"></i>
+                    {% elif service.social == "youtube" %}<i class="fab fa-youtube fa-2x" style="color:#FF0000;"></i>
+                    {% elif service.social == "tiktok" %}<i class="fab fa-tiktok fa-2x" style="color:#010101;"></i>
+                    {% else %}<i class="fas fa-star fa-2x"></i>{% endif %}
+                </div>
+
+                <div class="service-content">
+                    <h3>{{ service.name }}</h3>
+                    <p>Мин.: {{ service.min }} | Макс.: {{ service.max }}</p>
+                    <p>Цена за 1000: {{ service.rate }} {{ balance.currency }}</p>
+                </div>
+
+                <div class="service-actions">
+                    <button class="select-btn">Выбрать</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+<!-- Модальное окно -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalServiceName"></h2>
+        
+        <div class="calc-box">
+            <div class="calc-row">
+                <span>Цена за 1000:</span>
+                <span><span id="modalRate">0</span> ₽</span>
+            </div>
+            <div class="calc-row">
+                <span>Количество:</span>
+                <span id="displayQuantity">0</span>
+            </div>
+            <div class="calc-row">
+                <span>Итого:</span>
+                <span><span id="totalPrice">0</span> ₽</span>
+            </div>
+        </div>
+
+        <form id="modalOrderForm" method="post" action="/create_invoice">
+            <input type="hidden" name="service_id" id="modalServiceId">
+            <label>Ссылка:</label>
+            <input type="text" name="link" required placeholder="Введите ссылку...">
+            <label style="margin-top:10px; display:block;">Количество:</label>
+            <input type="number" name="quantity" id="inputQuantity" min="1" required placeholder="0">
+            <button type="submit">Подтвердить и оплатить</button>
+        </form>
+    </div>
+</div>
+
+<script src="/static/main.js"></script>
+
+</body>
+</html>
