@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IPA Catalog</title>
+  <style>
+    :root {
+      --bg: #0c1220;
+      --panel: #111a2e;
+      --card: #18233d;
+      --text: #eef4ff;
+      --muted: #9fb0d4;
+      --accent: #4ecdc4;
+      --line: #263757;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: radial-gradient(1300px 700px at 10% -10%, #1b2a4a 0, transparent 60%), var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    .head { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(145deg, #4ecdc4, #2f5de5);
+    }
+    h1 { margin: 0; font-size: 22px; font-weight: 700; }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
+    .search {
+      margin-top: 14px; margin-bottom: 14px;
+      display: flex; gap: 10px;
+    }
+    input, select, button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+    input { flex: 1; }
+    button {
+      background: linear-gradient(145deg, #2a4dff, #2741b6);
+      border: 0; cursor: pointer;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .title { font-size: 16px; margin: 0 0 8px 0; }
+    .meta { color: var(--muted); font-size: 12px; line-height: 1.5; margin-bottom: 10px; }
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #213458; color: var(--text); text-decoration: none;
+      border-radius: 10px; padding: 8px 10px; font-size: 12px;
+      border: 1px solid var(--line);
+      min-height: 34px;
+    }
+    .btn.primary { background: linear-gradient(145deg, #2a4dff, #2741b6); border: 0; }
+    .empty { color: var(--muted); padding: 18px 2px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div class="logo"></div>
+      <div>
+        <h1>IPA Catalog</h1>
+        <div class="sub">Mini App catalog for games and apps</div>
+      </div>
+    </div>
+
+    <div class="search">
+      <input id="q" placeholder="Поиск: minecraft" />
+      <select id="type">
+        <option value="">Все</option>
+        <option value="game">Игры</option>
+        <option value="app">Приложения</option>
+      </select>
+      <button id="findBtn">Найти</button>
+    </div>
+
+    <div id="status" class="empty">Загрузка каталога...</div>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    const statusEl = document.getElementById("status");
+    const gridEl = document.getElementById("grid");
+    const qEl = document.getElementById("q");
+    const typeEl = document.getElementById("type");
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) tg.ready();
+
+    function itemCard(item) {
+      const typeLabel = item.type === "game" ? "Игра" : "Приложение";
+      const downloadHref = item.download_url || "";
+      const details = [
+        `Тип: ${typeLabel}`,
+        `Версия: ${item.version || "N/A"}`,
+        `Жанр: ${item.genre || "N/A"}`,
+        `Размер: ${item.size || "N/A"}`
+      ].join("<br>");
+
+      const openAction = downloadHref
+        ? `<a class="btn primary" href="${downloadHref}" target="_blank">Скачать</a>`
+        : `<button class="btn primary" onclick="openBotDownload(${item.id})">Через бота</button>`;
+
+      return `
+        <article class="card">
+          <h3 class="title">${item.name}</h3>
+          <div class="meta">${details}</div>
+          <div class="actions">
+            ${openAction}
+            <button class="btn" onclick="showItem(${item.id})">Подробнее</button>
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadItems() {
+      const q = encodeURIComponent(qEl.value.trim());
+      const type = encodeURIComponent(typeEl.value);
+      const resp = await fetch(`/api/items?q=${q}&type=${type}&limit=60`);
+      const data = await resp.json();
+      const items = data.items || [];
+      gridEl.innerHTML = items.map(itemCard).join("");
+      statusEl.textContent = items.length ? "" : "Ничего не найдено";
+    }
+
+    async function showItem(id) {
+      const resp = await fetch(`/api/items/${id}`);
+      if (!resp.ok) return;
+      const item = await resp.json();
+      alert(
+        `${item.name}\n\n` +
+        `Версия: ${item.version}\n` +
+        `Обновлено: ${item.updated}\n` +
+        `Категория: ${item.category}\n` +
+        `Разработчик: ${item.developer}\n` +
+        `Скриншоты: ${item.screenshots?.length || 0}`
+      );
+    }
+
+    function openBotDownload(id) {
+      if (!tg) return;
+      tg.openTelegramLink(`https://t.me/icorevault_bot?start=dl_${id}`);
+    }
+
+    document.getElementById("findBtn").addEventListener("click", loadItems);
+    qEl.addEventListener("keydown", (e) => { if (e.key === "Enter") loadItems(); });
+    loadItems();
+  </script>
+</body>
+</html>
