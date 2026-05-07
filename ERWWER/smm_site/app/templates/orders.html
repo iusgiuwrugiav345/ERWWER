@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% set active = 'orders' %}
+{% block title %}Boostix - Заказы{% endblock %}
+{% block content %}
+<h1 class="page-title">Мои заказы</h1>
+{% if orders %}
+<div class="services-grid">
+    {% for order in orders %}
+    <div class="service-card">
+        <div class="service-content">
+            <h3>{{ order.type }}</h3>
+            <p>Кол-во: {{ order.quantity }} • Сумма: {{ order.total }} ₽</p>
+            <p>Ссылка: <a href="{{ order.link }}" target="_blank">{{ order.link }}</a></p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-inbox"></i>
+    <p>Заказов пока нет.</p>
+    <a href="/" class="primary-btn" style="text-decoration:none;display:inline-flex;width:auto;">
+        <i class="fas fa-plus"></i> Создать заказ
+    </a>
+</div>
+{% endif %}
+{% endblock %}
