@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+jinja2
+requests
+python-multipart
+fastapi
+jinja2
+python-multipart
+requests
+uvicorn
+sqlalchemy
