@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: boostix
+    env: python
+    region: oregon
+    plan: free
+    rootDir: smm_site
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
