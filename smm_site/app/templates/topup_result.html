@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% set active = 'home' %}
+{% block title %}Boostix - {% if paid %}Оплачено{% else %}Ожидание оплаты{% endif %}{% endblock %}
+{% block content %}
+<div class="empty-state">
+    {% if paid %}
+        <i class="fas fa-circle-check" style="color:#22c55e;"></i>
+        <h1 class="page-title">Баланс пополнен!</h1>
+        <p>Зачислено: <strong>{{ invoice.amount_rub }} ₽</strong></p>
+        <a href="/" class="primary-btn" style="text-decoration:none;display:inline-flex;width:auto;">
+            <i class="fas fa-arrow-left"></i> К услугам
+        </a>
+    {% else %}
+        <i class="fas fa-hourglass-half" style="color:#f59e0b;"></i>
+        <h1 class="page-title">Ожидание оплаты</h1>
+        <p>Если вы уже оплатили — обновите страницу через минуту, баланс зачислится автоматически.</p>
+        {% if invoice and invoice.pay_url %}
+        <a href="{{ invoice.pay_url }}" class="primary-btn" style="text-decoration:none;display:inline-flex;width:auto;">
+            <i class="fas fa-credit-card"></i> Открыть страницу оплаты
+        </a>
+        {% endif %}
+        <a href="/" class="legal-link" style="margin-top:14px;">← Вернуться на главную</a>
+    {% endif %}
+</div>
+{% endblock %}

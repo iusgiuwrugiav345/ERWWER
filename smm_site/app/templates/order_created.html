@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% set active = 'home' %}
+{% block title %}Boostix - Заказ создан{% endblock %}
+{% block content %}
+<div class="empty-state">
+    <i class="fas fa-circle-check" style="color:#22c55e;"></i>
+    <h1 class="page-title">Заказ создан!</h1>
+    <div class="support-section" style="max-width:520px;margin:24px auto;text-align:left;">
+        <p><strong>Услуга:</strong> {{ order.type }}</p>
+        <p><strong>Количество:</strong> {{ order.quantity }}</p>
+        <p><strong>Сумма:</strong> {{ order.total }} {{ balance.currency }}</p>
+        <p><strong>Ссылка:</strong> <a href="{{ order.link }}" target="_blank">{{ order.link }}</a></p>
+        {% if order.order %}<p><strong>Номер заказа:</strong> {{ order.order }}</p>{% endif %}
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+        <a href="/orders" class="primary-btn" style="text-decoration:none;display:inline-flex;width:auto;">
+            <i class="fas fa-shopping-bag"></i> Мои заказы
+        </a>
+        <a href="/" class="primary-btn secondary" style="text-decoration:none;display:inline-flex;width:auto;">
+            <i class="fas fa-rotate"></i> Повторить
+        </a>
+    </div>
+</div>
+{% endblock %}
