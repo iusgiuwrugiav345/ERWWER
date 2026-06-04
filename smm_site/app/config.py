@@ -1,1 +1,0 @@
-VINGBOOST_API_KEY = "2dBtDNhNlo8XohUFIwHhnjYu3pi2uensoH2ZtjlXqo4cfj9Xgk1G55yxYv2v"
